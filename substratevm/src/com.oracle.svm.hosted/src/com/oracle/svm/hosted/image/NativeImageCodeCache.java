@@ -60,6 +60,7 @@ import org.graalvm.word.UnsignedWord;
 import org.graalvm.word.WordFactory;
 
 import com.oracle.graal.pointsto.BigBang;
+import com.oracle.graal.pointsto.meta.AnalysisField;
 import com.oracle.graal.pointsto.meta.AnalysisMethod;
 import com.oracle.objectfile.ObjectFile;
 import com.oracle.svm.core.SubstrateOptions;
@@ -279,6 +280,21 @@ public abstract class NativeImageCodeCache {
                 Object accessor = reflectionSupport.getAccessor(reflectMethod);
                 reflectionMetadataEncoder.addReflectionExecutableMetadata(hMetaAccess, method, reflectMethod, accessor);
                 includedMethods.add(method);
+            }
+        }
+
+        for (Object field : reflectionSupport.getHidingReflectionFields()) {
+            AnalysisField hidingField = (AnalysisField) field;
+            HostedField hostedField = hUniverse.optionalLookup(hidingField);
+            if (hostedField == null || !includedFields.contains(hostedField)) {
+                HostedType declaringType = hUniverse.lookup(hidingField.getDeclaringClass());
+                String name = hidingField.getName();
+                HostedType type = hUniverse.lookup(hidingField.getType());
+                int modifiers = hidingField.getModifiers();
+                reflectionMetadataEncoder.addHidingFieldMetadata(hidingField, declaringType, name, type, modifiers);
+                if (hostedField != null) {
+                    includedFields.add(hostedField);
+                }
             }
         }
 
@@ -623,6 +639,8 @@ public abstract class NativeImageCodeCache {
         void addReflectionExecutableMetadata(MetaAccessProvider metaAccess, HostedMethod sharedMethod, Executable reflectMethod, Object accessor);
 
         void addHeapAccessibleObjectMetadata(MetaAccessProvider metaAccess, AccessibleObject object);
+
+        void addHidingFieldMetadata(AnalysisField analysisField, HostedType declType, String name, HostedType type, int modifiers);
 
         void addHidingMethodMetadata(AnalysisMethod analysisMethod, HostedType declType, String name, HostedType[] paramTypes, int modifiers, HostedType returnType);
 
