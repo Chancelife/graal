@@ -201,14 +201,8 @@ public final class EspressoLanguage extends TruffleLanguage<EspressoContext> {
             return false;
         }
 
-//         TODO (ivan-ristovic) Boot classpath equivallence check
-//        com.oracle.truffle.espresso.runtime.Classpath oldBootClassPath = context.getBootClasspath();
-//        com.oracle.truffle.espresso.runtime.Classpath newBootClassPath = new com.oracle.truffle.espresso.runtime.Classpath(newProperties.bootClasspath()
-//                .stream()
-//                .map(java.nio.file.Path::toString)
-//                .collect(java.util.stream.Collectors.joining(java.io.File.pathSeparator))
-//        );
-//        return oldBootClassPath.toString().equals(newBootClassPath.toString());
+        // TODO(ivan-ristovic): Boot classpath equivallence check
+
         return true;
     }
 

@@ -77,7 +77,7 @@ public final class ParserKlassCacheListSupport {
         if (version.java8OrEarlier()) {
             return getDefaultJava8ClassList();
         } else {
-            return getDefaultJava11ClassList();
+            return getDefaultClassList();
         }
     }
 
@@ -395,7 +395,6 @@ public final class ParserKlassCacheListSupport {
                 types.getOrCreate("Ljava/util/zip/ZipConstants;"),
                 types.getOrCreate("Ljava/util/zip/ZipFile;"),
                 types.getOrCreate("Ljdk/internal/util/StaticProperty;"),
-                types.getOrCreate("LMyClass;"),
                 types.getOrCreate("Lsun/launcher/LauncherHelper;"),
                 types.getOrCreate("Lsun/launcher/LauncherHelper$FXHelper;"),
                 types.getOrCreate("Lsun/management/ManagementFactory;"),
@@ -502,7 +501,7 @@ public final class ParserKlassCacheListSupport {
         ));
     }
 
-    private List<Symbol<Symbol.Type>> getDefaultJava11ClassList() {
+    private List<Symbol<Symbol.Type>> getDefaultClassList() {
         return Collections.unmodifiableList(Arrays.asList(
                 types.getOrCreate("Lcom/oracle/truffle/espresso/polyglot/ArityException;"),
                 types.getOrCreate("Lcom/oracle/truffle/espresso/polyglot/ExceptionType;"),

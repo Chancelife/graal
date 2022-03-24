@@ -479,10 +479,6 @@ public final class EspressoContext {
         // Setup finalization support in the host VM.
         FinalizationSupport.ensureInitialized();
 
-        // Boot classpath needs to be preserved after pre-initialization in order to compare it with the runtime environment
-        // After patching of the pre-initialized context in runtime, we have to drop the old boot classpath
-        this.bootClasspath = null;
-
         if (getEnv().isPreInitialization()) {
             setLanguageCache(EspressoLanguageCache.preInitialized());
         }
@@ -605,7 +601,7 @@ public final class EspressoContext {
             throw new RuntimeException("Could not detach current thread correctly");
         }
         this.threadRegistry.stopThreads();
-        this.bootClasspath.closeEntries();
+        this.bootClasspath = null;
 
         getJNI().dispose();
         this.vm.dispose();
@@ -863,6 +859,9 @@ public final class EspressoContext {
         if (jimageLibrary == null) {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             EspressoError.guarantee(getJavaVersion().modulesEnabled(), "Jimage available for java >= 9");
+            if (nativeAccess == null) {
+                throw EspressoError.shouldNotReachHere("Native access has not yet been created");
+            }
             this.jimageLibrary = new JImageLibrary(this);
         }
         return jimageLibrary;
